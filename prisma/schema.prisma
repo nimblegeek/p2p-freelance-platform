@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String
+  userType      UserType
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  profile       Profile?
+  jobsPosted    Job[]     @relation("JobPoster")
+  applications  JobApplication[]
+  messages      Message[]
+}
+
+model Profile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio           String?
+  skills        String[]
+  hourlyRate    Float?
+  availability  Boolean   @default(true)
+  portfolio     Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Job {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  budget        Float
+  skills        String[]
+  status        JobStatus @default(OPEN)
+  posterId      String
+  poster        User      @relation("JobPoster", fields: [posterId], references: [id])
+  applications  JobApplication[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model JobApplication {
+  id            String    @id @default(cuid())
+  jobId         String
+  job           Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicantId   String
+  applicant     User      @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  proposal      String
+  status        ApplicationStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Message {
+  id            String    @id @default(cuid())
+  content       String
+  senderId      String
+  sender        User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  jobId         String?
+  createdAt     DateTime  @default(now())
+}
+
+enum UserType {
+  CLIENT
+  FREELANCER
+}
+
+enum JobStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
