@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import WaitlistForm from "@/components/WaitlistForm";
 
 export default function Home() {
   return (
@@ -14,6 +15,19 @@ export default function Home() {
             A peer-to-peer freelancing platform that eliminates intermediaries,
             reduces fees, and puts you in control.
           </p>
+          
+          {/* Waitlist Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-6">
+              Join the Waitlist
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+              Be the first to know when we launch and get early access to our platform.
+            </p>
+            <WaitlistForm />
+          </div>
+
+          {/* Navigation Links */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/auth/signup"
